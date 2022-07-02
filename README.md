@@ -8,4 +8,3 @@ iwr "https://github.com/lepichu/crystal-installer/releases/download/0.1/crystal-
 
 --- 
 Licensed under MIT License - LePichu (2022). 
----
