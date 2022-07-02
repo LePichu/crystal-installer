@@ -1,3 +1,5 @@
+$ErrorActionPreference = 'silentlycontinue'
+
 switch ($Env:Path -match "CRYSTAL_PATH") {
     False {
         $old_path = [Environment]::GetEnvironmentVariable("PATH")
@@ -5,7 +7,7 @@ switch ($Env:Path -match "CRYSTAL_PATH") {
             [Environment]::SetEnvironmentVariable("PATH", "$old_path;%CRYSTAL_PATH%", "Machine")
         }
         else {
-            [Environment]::SetEnvironmentVariable("PATH", "$old_path;`$CRYSTAL_PATH", "Machine")
+            [Environment]::SetEnvironmentVariable("PATH", "$old_path`:`$CRYSTAL_PATH", "Machine")
         }
     }
 }
@@ -43,14 +45,16 @@ $ender = switch($IsWin) {
     }
 }
 
-mkdir "$Global:HOME\.crystal\temp"
-mkdir "$Global:HOME\.crystal\ver\$ver\"
+try {
+    mkdir "$Global:HOME\.crystal\temp"
+    mkdir "$Global:HOME\.crystal\ver\$ver\"
 
-Invoke-WebRequest $url -OutFile "$Global:HOME\.crystal\temp\crystal-$ver.$ender" 
-tar -xf "$Global:HOME\.crystal\temp\crystal-$ver.$ender" --directory "$Global:HOME\.crystal\ver\$ver\"
+    Invoke-WebRequest $url -OutFile "$Global:HOME\.crystal\temp\crystal-$ver.$ender" 
+    tar -xf "$Global:HOME\.crystal\temp\crystal-$ver.$ender" --directory "$Global:HOME\.crystal\ver\$ver\"
+} catch {}
 
 if ($IsWin) {
-    [Environment]::SetEnvironmentVariable("CRYSTAL_PATH", "$Global:HOME\.crystal\ver\$ver\", "Machine")
+    [Environment]::SetEnvironmentVariable("CRYSTAL_PATH", "$Global:HOME\.crystal\ver\$ver\", "User")
 }
 else {
     [Environment]::SetEnvironmentVariable("CRYSTAL_PATH", "$Global:HOME\.crystal\ver\$ver\crystal-$ver-1\bin", "Machine")
